@@ -30,7 +30,7 @@ std::vector<ServiceClient> client_vector;
 std::vector <task_msg_t> pos_input;
 int global_index = 0;
 //string srv_name_base = "teleop_ctrl_service";
-float formation_type[3][2] = {{0.0,0.0},{1.20,-1.20},{0.4,0.4}};
+float formation_type[3][2] = {{0.0,0.0},{1.20,-1.20},{-0.4,-0.4}};
 //float formation_type[3][2] = {{0.6,-0.6},{-1.04,-1.04},{0.4,0.4}};
 float uav1_pos[3];
 //int last_index1 = 0;
@@ -45,8 +45,8 @@ void quad1()
 void pos1_cb(const geometry_msgs::PoseStamped::ConstPtr &mocap_pos1) {
     boost::mutex::scoped_lock leader_lock(leader_mutex);
     uav1_pos[0] = mocap_pos1->pose.position.x;
-    uav1_pos[1] = mocap_pos1->pose.position.y;
-    uav1_pos[2] = mocap_pos1->pose.position.z;
+    uav1_pos[1] = mocap_pos1->pose.position.z;
+    uav1_pos[2] = -mocap_pos1->pose.position.y;
 }
 
 void uav_thread_function(int id) {
@@ -86,7 +86,7 @@ void uav_thread_function(int id) {
             hover_pos.request.teleop_ctrl_mask = hover_pos.request.MASK_HOVER_POS;
             hover_pos.request.hover_pos_x = pos_input[global_index].position[0];
             hover_pos.request.hover_pos_y = pos_input[global_index].position[1];
-            hover_pos.request.hover_pos_z = pos_input[global_index].position[2];
+            hover_pos.request.hover_pos_z = -1.50f;//pos_input[global_index].position[2];
             hover_pos.request.hover_pos_yaw = -1.57;
             global_index ++;
             tasking_flag = true;
